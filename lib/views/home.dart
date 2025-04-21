@@ -8,62 +8,54 @@ import 'pages/enseignants.dart';
 class Home extends StatelessWidget {
   const Home({super.key});
 
-  void _showMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext context) {
-        return ListView(
-          shrinkWrap: true,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                "Menu",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            ),
-            _buildMenuItem(context, Icons.child_care, "Enfants"),
-            _buildMenuItem(context, Icons.palette, "Activités"),
-            _buildMenuItem(context, Icons.people, "Parents"),
-            _buildMenuItem(context, Icons.restaurant_menu, "Repas"),
-            _buildMenuItem(context, Icons.school, "Enseignants"),
-          ],
-        );
-      },
+  void _navigateTo(BuildContext context, Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => page),
     );
   }
 
- Widget _buildMenuItem(BuildContext context, IconData icon, String title) {
-  // Associe chaque titre à sa page
-  final Map<String, Widget> pageRoutes = {
-    "Enfants": const EnfantsPage(),
-    "Activités": const ActivitesPage(),
-    "Parents": const ParentsPage(),
-    "Repas": const RepasPage(),
-    "Enseignants": const EnseignantsPage(),
-  };
+  Widget _buildMenuButton(BuildContext context, IconData icon, String label, Widget destination) {
+    return InkWell(
+      onTap: () => _navigateTo(context, destination),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.lightBlue.shade50,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 30, color: Colors.lightBlue),
+            const SizedBox(width: 16),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const Spacer(),
+            const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
 
-  return ListTile(
-    leading: Icon(icon, color: Colors.lightBlue),
-    title: Text(title),
-    onTap: () {
-      Navigator.pop(context); // Ferme le menu
-      final Widget? page = pageRoutes[title];
-      if (page != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => page),
-        );
-      }
-    },
-  );
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         elevation: 4,
@@ -72,63 +64,33 @@ class Home extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () => _showMenu(context),
-        ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(
-              Icons.home,
-              size: 100,
-              color: Colors.lightBlue,
-            ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 16),
             const Text(
-              "Bienvenue à l'accueil !",
+              "Bienvenue 👋",
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: Colors.lightBlue,
               ),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const Text(
-              "Nous sommes ravis de vous voir ici. "
-              "Explorez l'application pour découvrir toutes ses fonctionnalités !",
-              style: TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: Colors.black87,
-              ),
-              textAlign: TextAlign.center,
+              "Choisissez une section pour continuer",
+              style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
-            const SizedBox(height: 40),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Action du bouton ici
-              },
-              icon: const Icon(Icons.arrow_forward),
-              label: const Text("Commencer"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.lightBlue,
-                foregroundColor: Colors.white,
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 14,
-                ),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-            ),
+            const SizedBox(height: 30),
+            _buildMenuButton(context, Icons.child_care, "Enfants", const EnfantsPage()),
+            _buildMenuButton(context, Icons.palette, "Activités", const ActivitesPage()),
+            _buildMenuButton(context, Icons.people, "Parents", const ParentsPage()),
+            _buildMenuButton(context, Icons.restaurant_menu, "Repas", const RepasPage()),
+            _buildMenuButton(context, Icons.school, "Enseignants", const EnseignantsPage()),
+            const SizedBox(height: 30),
           ],
         ),
       ),
